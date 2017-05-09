@@ -10,6 +10,8 @@ import android.widget.Button;
  * Created by HenriqueL on 06/05/2017.
  */
 public class Menu_Activity extends Activity {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +27,7 @@ public class Menu_Activity extends Activity {
            @Override
             public void onClick(View v) {
                 // setContentView(R.layout.play_activity);
-               Intent I = new Intent(Menu_Activity.this,main.class);
+               Intent I = new Intent(Menu_Activity.this,ModeSelection_Activity.class);
                startActivity((I));
             }
 

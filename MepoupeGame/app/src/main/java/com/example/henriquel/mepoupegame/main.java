@@ -1,6 +1,8 @@
 package com.example.henriquel.mepoupegame;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -13,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Random;
+
+
 
 public class main extends Activity {
     //Assets
@@ -29,11 +33,13 @@ public class main extends Activity {
     int x =45;
     int y =0;
     int CountCasas = 0;
-    int[] casax = new int[31];
-    int[] casay = new int[31];
+    int[] casax = new int[35];
+    int[] casay = new int[35];
     int RRV;
     //Mecânica
     Random dado;
+    int contador_da_conta_pesada;
+    int contador_semanas;
     Random cartas;
     int n_carta;
     //Variáveis de Controle
@@ -41,13 +47,20 @@ public class main extends Activity {
     float time_to_show_carta =100;
     boolean carta_na_tela;
     //Variáveis de Status do Jogador
-    public static int alegria=50;
-    public static int dinheiro=50;
+    public  int alegria=50;
+    public  int dinheiro=50;
 
-
+    //Importanto Outros Classes
+    private Object context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Recebendo Valor da outra Activity para determina se vai ser menina ou menino e o nome
+        final int player_Sex = getIntent().getIntExtra("Boy_or_Girl",0);
+        final String nome_do_Pestinha = getIntent().getStringExtra("Nome_do_Pestinha");
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -62,11 +75,22 @@ public class main extends Activity {
 
 
 
+
+
+
+
         b_dado.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dado = new Random();
                 int i1 = dado.nextInt(6 - 0) + 1;
+                contador_da_conta_pesada +=i1;
+                dinheiro-=100;
+
+                if (contador_da_conta_pesada>=7){
+                    contador_da_conta_pesada-=7;
+                    contador_semanas++;
+                }
                 RRV += i1;
                 andou=true;
                 b_dado.setVisibility(View.INVISIBLE);
@@ -92,6 +116,18 @@ public class main extends Activity {
 
 
 
+                if (dinheiro<=0||alegria<=0||RRV>=31){
+                    Intent I = new Intent(main.this,Score_Activity.class);
+                    //      I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
+                    I.putExtra("dinheiro",dinheiro);
+                    I.putExtra("alegria",alegria);
+                    I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
+                    startActivity(I);
+                    Log.d("Movimentação", "A variável andou é :"+dinheiro+", viu");
+
+                }
+
+
 
             }
 
@@ -102,7 +138,7 @@ public class main extends Activity {
 
 
         for (int i = 0; i < 31; ++i) {
-          //  imageView_boyzo.bringToFront();
+            imageView_boyzo.bringToFront();
             addScaledImageView(t_quadrado,ScaleValue,container);
             CountCasas ++;
             casax[i]=ValueX;
@@ -117,6 +153,8 @@ public class main extends Activity {
 
 
 
+
+
         Thread t = new Thread() {
 
             @Override
@@ -127,6 +165,11 @@ public class main extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
+
+
+
+
                                 BringToFront(imageView_boyzo);
                                 imageView_boyzo.setX(x);
                                 imageView_boyzo.setY(y);
@@ -169,6 +212,15 @@ public class main extends Activity {
 
 
                                 }
+
+
+
+
+
+
+
+                                   // Log.d("Passou esse carai", "O nome do nojento é :"+contador_da_conta_pesada+", viu");
+
                              //   Log.d("Movimentação", "A variável andou é :"+andou +", viu");
 
                             }
