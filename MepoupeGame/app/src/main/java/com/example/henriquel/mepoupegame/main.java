@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 
@@ -53,6 +55,13 @@ public class main extends Activity {
     //Importanto Outros Classes
     private Object context;
 
+    // Teste
+    int[] Dias_Semana ;
+    int DayCount;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Recebendo Valor da outra Activity para determina se vai ser menina ou menino e o nome
@@ -60,9 +69,9 @@ public class main extends Activity {
         final String nome_do_Pestinha = getIntent().getStringExtra("Nome_do_Pestinha");
 
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         //Declando os Elementos do Layout ou no Drawable
         b_dado=(ImageButton) findViewById(R.id.dado);
@@ -85,17 +94,29 @@ public class main extends Activity {
                 dado = new Random();
                 int i1 = dado.nextInt(6 - 0) + 1;
                 contador_da_conta_pesada +=i1;
-                dinheiro-=100;
+               // dinheiro-=100;
 
                 if (contador_da_conta_pesada>=7){
                     contador_da_conta_pesada-=7;
                     contador_semanas++;
+                    Log.d("Criação", "Olha ,Conta pesada chegou!!!!");
                 }
                 RRV += i1;
                 andou=true;
                 b_dado.setVisibility(View.INVISIBLE);
                 SpawnCarta();
                 carta_na_tela=true;
+
+                if (RRV>=31){
+                    Intent I = new Intent(main.this,Score_Activity.class);
+                    //      I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
+                    I.putExtra("dinheiro",dinheiro);
+                    I.putExtra("alegria",alegria);
+                    I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
+                    startActivity(I);
+                    Log.d("Movimentação", "A variável andou é :"+RRV+", viu");
+
+                }
 
 
 
@@ -116,14 +137,14 @@ public class main extends Activity {
 
 
 
-                if (dinheiro<=0||alegria<=0||RRV>=31){
+                if (dinheiro<=0||alegria<=0){
                     Intent I = new Intent(main.this,Score_Activity.class);
                     //      I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
                     I.putExtra("dinheiro",dinheiro);
                     I.putExtra("alegria",alegria);
                     I.putExtra("Nome_do_Pestinha",nome_do_Pestinha);
                     startActivity(I);
-                    Log.d("Movimentação", "A variável andou é :"+dinheiro+", viu");
+                  //  Log.d("Movimentação", "A variável andou é :"+dinheiro+", viu");
 
                 }
 
@@ -136,20 +157,34 @@ public class main extends Activity {
 
 
 
-
+        SortCards();
         for (int i = 0; i < 31; ++i) {
+
+            if (CountCasas<1){
+                DayCount =Dias_Semana[1];
+            }
             imageView_boyzo.bringToFront();
-            addScaledImageView(t_quadrado,ScaleValue,container);
+            addScaledImageView(ScaleValue,container);
+
             CountCasas ++;
+
             casax[i]=ValueX;
             casay[i]=ValueY;
             ValueX +=100;
+            Log.d("Criação", "Olha ,DayCount é "+DayCount+" viu");
+
             if (CountCasas>=7){
                 ValueY +=100;
                 ValueX =45;
                 CountCasas =0;
+
             }
+            DayCount =Dias_Semana[CountCasas];
+
+
+
         }
+
 
 
 
@@ -165,6 +200,10 @@ public class main extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
+
+
+
 
 
 
@@ -218,7 +257,6 @@ public class main extends Activity {
 
 
 
-
                                    // Log.d("Passou esse carai", "O nome do nojento é :"+contador_da_conta_pesada+", viu");
 
                              //   Log.d("Movimentação", "A variável andou é :"+andou +", viu");
@@ -244,13 +282,16 @@ public class main extends Activity {
         }
         return  true;
     }
-    private void addScaledImageView(Bitmap MyImage , int sampleSize , FrameLayout container) {
+    private void addScaledImageView( int sampleSize , FrameLayout container) {
 
 
         BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
         bitmapOptions.inSampleSize = sampleSize;
 
-        Bitmap scaledBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.quadrado_preto, bitmapOptions);
+        Casa_Class casa_class= new Casa_Class(this,this);
+      // Bitmap scaledBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.quadrado_preto, bitmapOptions);
+        Bitmap scaledBitmap= casa_class.casa_Class_bitmap;
+
 
 
         FrameLayout rl = (FrameLayout) findViewById(R.id.frame);
@@ -266,36 +307,36 @@ public class main extends Activity {
     }
 
     void SpawnCarta(){
-        cartas = new Random();
-        n_carta = cartas.nextInt(8 - 0) + 1;
+        Casa_Class casa_class= new Casa_Class(this,this);
+       // cartas = new Random();
+      //  n_carta = cartas.nextInt(8 - 0) + 1;
+        n_carta=contador_da_conta_pesada;
         ib_carta.bringToFront();
 
+              //2            //6
 
-        if (n_carta==1){
+        if (Dias_Semana[0]==n_carta) {
             ib_carta.setImageResource(R.drawable.carta);
+        }
+        if (Dias_Semana[1]==n_carta){
+            ib_carta.setImageResource(R.drawable.carta_1);
 
         }
-        if (n_carta==2){
+        if (Dias_Semana[1+1]==n_carta){
             ib_carta.setImageResource(R.drawable.carta_2);
 
         }
-        if (n_carta==3){
+        if (Dias_Semana[2+1]==n_carta){
             ib_carta.setImageResource(R.drawable.carta_3);
         }
-        if (n_carta==4){
+        if (Dias_Semana[3+1]==n_carta){
             ib_carta.setImageResource(R.drawable.carta_4);
         }
-        if (n_carta==5){
+        if (Dias_Semana[4+1]==n_carta){
             ib_carta.setImageResource(R.drawable.carta_5);
         }
-        if (n_carta==6){
+        if (Dias_Semana[5+1]==n_carta){
             ib_carta.setImageResource(R.drawable.carta_6);
-        }
-        if (n_carta==7){
-            ib_carta.setImageResource(R.drawable.carta_7);
-        }
-        if (n_carta==8){
-            ib_carta.setImageResource(R.drawable.carta_8);
         }
 
 
@@ -355,6 +396,31 @@ public class main extends Activity {
 
 
       }
+
+    public  void SortCards() {
+        int x[] = {0,1,2,3,4,5,6};
+        int i = 0;
+        while (i < x.length) {
+            x[i] = (int) (Math.random() * 7);
+            boolean flag = true;
+            for (int j = 0; j < i; j++)
+            {
+                if (x[j] == x[i])
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag)
+                i++;
+           // Log.d("Sort Cards Void ", "A Carta que você pegou foi : , viu");
+
+
+        }
+        Dias_Semana=x;
+        Log.d("this is my array", "arr: " + Arrays.toString(Dias_Semana));
+
+    }
 
 }
 
